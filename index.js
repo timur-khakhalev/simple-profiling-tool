@@ -6,14 +6,40 @@ const timeConverter = time => {
   else return `${time} ms`
 }
 
+const addEventNum = (keys, field, status) => {
+  if (field) {
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+    const lastElement = keys
+      .map(c => parseInt(c.replaceAll(/[^0-9]+/g, '')))
+      .filter(i => i)
+      .sort(collator.compare)
+      .pop()
+    if (status === 'end') return keys
+      .sort(collator.compare)
+      .pop()
+    if (lastElement) field += lastElement + 1
+    else field += 1
+  }
+  return field
+}
+
 module.exports = {
   start: event => {
+    event = addEventNum(Object.keys(checkPoints), event, 'start')
     checkPoints[event] = {}
+
+    Object.defineProperty(checkPoints, `${event}`, {
+      value: {
+        start: { }
+      },
+      writable: true
+    })
     checkPoints[event].start = {
       time: new Date().getTime()
     }
   },
   end: event => {
+    event = addEventNum(Object.keys(checkPoints), event, 'end')
     checkPoints[event].end = {
       time: new Date().getTime()
     }
