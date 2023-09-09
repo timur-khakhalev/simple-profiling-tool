@@ -1,3 +1,4 @@
+const lodash = require('lodash')
 const checkPoints = {}
 
 const timeConverter = time => {
@@ -7,16 +8,25 @@ const timeConverter = time => {
 }
 
 const addEventNum = (keys, field, status) => {
+  let eventKeys = keys
+  if (keys.length) {
+    const groupedEvents = lodash.groupBy(keys, w => w.replace(/[0-9]/g, ''))
+
+    if (!groupedEvents[field]) return field
+    else eventKeys = groupedEvents[field]
+  } else return field
+
   if (field) {
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
-    const lastElement = keys
+    const lastElement = eventKeys
       .map(c => parseInt(c.replaceAll(/[^0-9]+/g, '')))
       .filter(i => i)
       .sort(collator.compare)
       .pop()
-    if (status === 'end') return keys
+    if (status === 'end') return eventKeys
       .sort(collator.compare)
       .pop()
+
     if (lastElement) field += lastElement + 1
     else field += 1
   }
