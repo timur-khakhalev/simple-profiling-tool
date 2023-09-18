@@ -76,8 +76,8 @@ class SimpleProfilingTool {
 
       Object.keys(groupedCheckPoints).forEach(k => {
         groupedCheckPoints[k] = groupedCheckPoints[k].map(e => {
-          if (!e.start.time) throw new Error(`Start checkpoint ${e.start.event} doesn't exists`)
-          if (!e.end.time) throw new Error(`End checkpoint ${e.start.event} doesn't exists`)
+          if (!e?.start?.time) throw new Error(`Start checkpoint ${e.start.event} doesn't exists`)
+          if (!e?.end?.time) throw new Error(`End checkpoint ${e.start.event} doesn't exists`)
 
           return { event: e.start.event, time: e.end.time - e.start.time }
         })
